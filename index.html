@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Media Seni Rupa - Kelas 4 SD</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Quicksand for cheerful kid style -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            accent: '#facc15', // Ceria Yellow
+                            accentOrange: '#fb923c',
+                            accentBlue: '#38bdf8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                        fredoka: ['Fredoka', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0fdf4;
+            background-image: radial-gradient(#bbf7d0 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Custom Bounce and Float Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+
+        @keyframes pulse-gentle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .animate-pulse-gentle {
+            animation: pulse-gentle 2.5s ease-in-out infinite;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 4px solid #bbf7d0;
+            box-shadow: 0 12px 32px rgba(22, 163, 74, 0.12);
+        }
+
+        .btn-bouncy {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 0 0 #15803d;
+        }
+
+        .btn-bouncy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 0 #15803d;
+        }
+
+        .btn-bouncy:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 0 #15803d;
+        }
+
+        .btn-accent-bouncy {
+            box-shadow: 0 6px 0 0 #c2410c;
+        }
+        .btn-accent-bouncy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 0 #c2410c;
+        }
+        .btn-accent-bouncy:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 0 #c2410c;
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4ade80;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between selection:bg-brand-300 selection:text-brand-700">
+
+    <!-- Top Header -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-4 border-brand-300 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-brand-400 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md transform -rotate-6">
+                    🎨
+                </div>
+                <div>
+                    <h1 class="font-fredoka text-xl md:text-2xl font-bold text-brand-700 tracking-wide">
+                        Petualangan Seni Rupa
+                    </h1>
+                    <p class="text-xs md:text-sm font-bold text-brand-600">Mata Pelajaran Seni Rupa • Kelas 4 SD</p>
+                </div>
+            </div>
+
+            <!-- Sound Toggle & Progress Indicator -->
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <button id="soundToggle" onclick="toggleAudio()" class="p-2.5 bg-brand-100 hover:bg-brand-200 text-brand-700 rounded-full transition shadow-sm flex items-center gap-2 text-sm font-bold">
+                    <i id="soundIcon" class="fas fa-volume-up text-lg text-brand-600"></i>
+                    <span id="soundText" class="hidden sm:inline">Suara: ON</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Steps Bar -->
+        <div class="bg-brand-50 border-t border-brand-200 px-2 py-2">
+            <div class="max-w-4xl mx-auto flex justify-between items-center text-xs md:text-sm font-bold overflow-x-auto gap-1">
+                <button onclick="switchTab(1)" id="step-btn-1" class="step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-brand-500 text-white shadow-sm">
+                    1. Pembuka 🚀
+                </button>
+                <button onclick="switchTab(2)" id="step-btn-2" class="step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-white text-slate-600 hover:bg-brand-100">
+                    2. Tujuan 🎯
+                </button>
+                <button onclick="switchTab(3)" id="step-btn-3" class="step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-white text-slate-600 hover:bg-brand-100">
+                    3. Materi 📚
+                </button>
+                <button onclick="switchTab(4)" id="step-btn-4" class="step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-white text-slate-600 hover:bg-brand-100">
+                    4. Aktivitas 🧩
+                </button>
+                <button onclick="switchTab(5)" id="step-btn-5" class="step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-white text-slate-600 hover:bg-brand-100">
+                    5. Kuis 📝
+                </button>
+                <button onclick="switchTab(6)" id="step-btn-6" class="step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-white text-slate-600 hover:bg-brand-100">
+                    6. Refleksi ⭐
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full flex-grow">
+
+        <!-- SECTION 1: SLIDE PEMBUKA & IDENTITAS -->
+        <section id="section-1" class="tab-content transition-all duration-300">
+            <div class="glass-card rounded-3xl p-6 md:p-10 relative overflow-hidden text-center md:text-left">
+                <!-- Decorative SVG graphics -->
+                <div class="absolute -right-10 -bottom-10 opacity-20 pointer-events-none">
+                    <svg width="240" height="240" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="80" fill="#22c55e"/>
+                    </svg>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <!-- Mascot Graphic -->
+                    <div class="md:col-span-5 flex flex-col items-center justify-center">
+                        <div class="relative animate-float">
+                            <div class="w-48 h-48 md:w-56 md:h-56 bg-brand-200 rounded-full flex items-center justify-center border-4 border-brand-400 shadow-inner">
+                                <span class="text-8xl">🖌️</span>
+                            </div>
+                            <div class="absolute -top-2 -right-2 bg-brand-accent text-slate-900 font-fredoka font-bold text-xs px-3 py-1.5 rounded-full border-2 border-white shadow-md animate-bounce">
+                                Halo Sahabat Seni! 👋
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Intro Form -->
+                    <div class="md:col-span-7 space-y-4">
+                        <div class="inline-block px-4 py-1.5 bg-brand-100 text-brand-700 font-bold text-sm rounded-full border border-brand-300">
+                            🌟 Media Pembelajaran Interaktif SD
+                        </div>
+                        <h2 class="font-fredoka text-3xl md:text-4xl font-bold text-slate-800 leading-tight">
+                            Mengenal Berbagai <span class="text-brand-600 underline decoration-brand-300 decoration-wavy">Media Seni Rupa</span>
+                        </h2>
+                        <p class="text-slate-600 font-medium text-base md:text-lg">
+                            Selamat datang teman-teman hebat Kelas 4! Mari kita bereksplorasi dan belajar mengenal alat, bahan, serta pewarna dalam membuat karya seni yang indah!
+                        </p>
+
+                        <!-- Student Identity Input -->
+                        <div class="bg-brand-50 p-5 rounded-2xl border-2 border-brand-200 space-y-3 mt-4 text-left">
+                            <h3 class="font-fredoka font-bold text-brand-700 text-lg flex items-center gap-2">
+                                <i class="fas fa-id-card text-brand-500"></i> Isilah Identitas Diri Sebelum Dimulai:
+                            </h3>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap Siswa:</label>
+                                <input type="text" id="studentName" placeholder="Ketik nama kamu di sini..." class="w-full px-4 py-3 rounded-xl border-2 border-brand-300 focus:border-brand-500 focus:outline-none font-bold text-slate-700 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Kelas / Nomor Absen:</label>
+                                <input type="text" id="studentClass" value="4 SD / Absen -" placeholder="Contoh: 4A / 12" class="w-full px-4 py-3 rounded-xl border-2 border-brand-300 focus:border-brand-500 focus:outline-none font-bold text-slate-700 bg-white">
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button onclick="saveIdentityAndStart()" class="w-full sm:w-auto px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-fredoka font-bold text-lg rounded-2xl btn-bouncy flex items-center justify-center gap-3">
+                                <span>Mulai Petualangan!</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: TUJUAN PEMBELAJARAN -->
+        <section id="section-2" class="tab-content hidden transition-all duration-300">
+            <div class="glass-card rounded-3xl p-6 md:p-10 space-y-6">
+                <div class="text-center max-w-2xl mx-auto space-y-2">
+                    <span class="bg-brand-200 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Target Kita Hari Ini</span>
+                    <h2 class="font-fredoka text-3xl font-bold text-brand-700">🎯 Tujuan Pembelajaran</h2>
+                    <p class="text-slate-600 font-medium">Setelah mempelajari media ini, Sahabat Seni diharapkan dapat:</p>
+                </div>
+
+                <!-- Learning Objective Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                    <!-- Card 1 -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-brand-200 shadow-sm hover:shadow-md transition text-center space-y-3 relative group">
+                        <div class="w-16 h-16 bg-brand-100 rounded-2xl mx-auto flex items-center justify-center text-3xl text-brand-600 group-hover:scale-110 transition">
+                            ✏️
+                        </div>
+                        <h3 class="font-fredoka text-lg font-bold text-slate-800">1. Mengenal Media Kering</h3>
+                        <p class="text-sm text-slate-600 font-medium">
+                            Siswa dapat menyebutkan dan mengidentifikasi contoh media kering seperti pensil warna, krayon, dan spidol.
+                        </p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-brand-200 shadow-sm hover:shadow-md transition text-center space-y-3 relative group">
+                        <div class="w-16 h-16 bg-blue-100 rounded-2xl mx-auto flex items-center justify-center text-3xl text-blue-600 group-hover:scale-110 transition">
+                            🎨
+                        </div>
+                        <h3 class="font-fredoka text-lg font-bold text-slate-800">2. Memahami Media Basah</h3>
+                        <p class="text-sm text-slate-600 font-medium">
+                            Siswa dapat membedakan jenis media basah seperti cat air, cat poster, kuas, dan palet pembaur.
+                        </p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-brand-200 shadow-sm hover:shadow-md transition text-center space-y-3 relative group">
+                        <div class="w-16 h-16 bg-amber-100 rounded-2xl mx-auto flex items-center justify-center text-3xl text-amber-600 group-hover:scale-110 transition">
+                            🗿
+                        </div>
+                        <h3 class="font-fredoka text-lg font-bold text-slate-800">3. Mengidentifikasi Alat Pendukung</h3>
+                        <p class="text-sm text-slate-600 font-medium">
+                            Siswa dapat menentukan pasangan bidang gambar (kanvas/kertas) dan bahan 3D (tanah liat, lem, gunting) dengan tepat.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Teacher Mascot Bubble -->
+                <div class="bg-brand-100 p-4 rounded-2xl border border-brand-300 flex items-center gap-4 mt-6">
+                    <span class="text-4xl">💡</span>
+                    <p class="text-sm font-bold text-brand-800">
+                        <strong class="font-fredoka text-base">Tahukah Kamu?</strong> Media seni rupa adalah semua bahan dan alat yang kita gunakan untuk mewujudkan karya seni yang indah!
+                    </p>
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-brand-200">
+                    <button onclick="switchTab(1)" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-fredoka font-bold rounded-xl transition">
+                        ⬅️ Kembali
+                    </button>
+                    <button onclick="switchTab(3)" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-fredoka font-bold rounded-xl btn-bouncy flex items-center gap-2">
+                        <span>Lanjut ke Materi</span> ➡️
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MATERI INTI SINGKAT -->
+        <section id="section-3" class="tab-content hidden transition-all duration-300">
+            <div class="glass-card rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="text-center space-y-1">
+                    <span class="bg-brand-200 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Pengetahuan Seni Rupa</span>
+                    <h2 class="font-fredoka text-3xl font-bold text-brand-700">📚 Contoh Media Seni Rupa</h2>
+                    <p class="text-slate-600 font-medium text-sm">Klik tab di bawah ini untuk melihat jenis media seni rupa!</p>
+                </div>
+
+                <!-- Interactive Tabs for Materials -->
+                <div class="flex flex-wrap justify-center gap-2 border-b-2 border-brand-200 pb-3">
+                    <button onclick="showMaterialTab('kering')" id="mat-tab-kering" class="mat-tab-btn px-5 py-2.5 rounded-2xl font-fredoka font-bold text-sm bg-brand-500 text-white shadow-sm">
+                        ✏️ 1. Media Kering
+                    </button>
+                    <button onclick="showMaterialTab('basah')" id="mat-tab-basah" class="mat-tab-btn px-5 py-2.5 rounded-2xl font-fredoka font-bold text-sm bg-white text-slate-600 hover:bg-brand-100">
+                        🎨 2. Media Basah
+                    </button>
+                    <button onclick="showMaterialTab('3d')" id="mat-tab-3d" class="mat-tab-btn px-5 py-2.5 rounded-2xl font-fredoka font-bold text-sm bg-white text-slate-600 hover:bg-brand-100">
+                        🗿 3. Media 3D & Alat Pendukung
+                    </button>
+                </div>
+
+                <!-- Material Tab Content 1: KERING -->
+                <div id="material-kering" class="material-content space-y-4">
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex items-center gap-3">
+                        <span class="text-3xl">🖍️</span>
+                        <div>
+                            <h3 class="font-fredoka font-bold text-amber-800 text-lg">Apa itu Media Kering?</h3>
+                            <p class="text-xs md:text-sm text-amber-900 font-medium">Media kering adalah alat gambar yang langsung bisa digunakan **tanpa perlu dicampur air atau minyak**.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border-2 border-brand-200 hover:border-brand-400 transition">
+                            <div class="text-4xl text-center mb-2">✏️</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Pensil Warna & 2B</h4>
+                            <p class="text-xs text-slate-600 mt-1">Digunakan untuk membuat sketsa awal dan memberikan warna halus pada kertas gambar.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-brand-200 hover:border-brand-400 transition">
+                            <div class="text-4xl text-center mb-2">🖍️</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Krayon & Oil Pastel</h4>
+                            <p class="text-xs text-slate-600 mt-1">Terbuat dari lilin atau minyak, menghasilkan warna yang pekat dan cerah.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-brand-200 hover:border-brand-400 transition">
+                            <div class="text-4xl text-center mb-2">🖊️</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Spidol Warna</h4>
+                            <p class="text-xs text-slate-600 mt-1">Memiliki tinta cair di dalamnya untuk membuat garis tegas atau mewarnai.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Tab Content 2: BASAH -->
+                <div id="material-basah" class="material-content space-y-4 hidden">
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200 flex items-center gap-3">
+                        <span class="text-3xl">💧</span>
+                        <div>
+                            <h3 class="font-fredoka font-bold text-blue-800 text-lg">Apa itu Media Basah?</h3>
+                            <p class="text-xs md:text-sm text-blue-900 font-medium">Media basah adalah pewarna yang **memerlukan pengencer** seperti air atau minyak sebelum dioleskan.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border-2 border-blue-200 hover:border-blue-400 transition">
+                            <div class="text-4xl text-center mb-2">🎨</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Cat Air (Watercolor)</h4>
+                            <p class="text-xs text-slate-600 mt-1">Memerlukan air sebagai pengencer. Menghasilkan sapuan warna transparan dan lembut.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-blue-200 hover:border-blue-400 transition">
+                            <div class="text-4xl text-center mb-2">🖌️</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Kuas Lukis</h4>
+                            <p class="text-xs text-slate-600 mt-1">Alat berbulu halus yang dipakai untuk mengoleskan cat ke alas karya.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-blue-200 hover:border-blue-400 transition">
+                            <div class="text-4xl text-center mb-2">🎨</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Palet Cat</h4>
+                            <p class="text-xs text-slate-600 mt-1">Wadah khusus berlengkung untuk menampung dan mencampur cat warna-warni.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Tab Content 3: 3D & Alat Pendukung -->
+                <div id="material-3d" class="material-content space-y-4 hidden">
+                    <div class="bg-green-50 p-4 rounded-2xl border border-green-200 flex items-center gap-3">
+                        <span class="text-3xl">✂️</span>
+                        <div>
+                            <h3 class="font-fredoka font-bold text-green-800 text-lg">Bahan 3D & Alat Pendukung</h3>
+                            <p class="text-xs md:text-sm text-green-900 font-medium">Alat dan bahan pendukung untuk membuat patung, kerajinan melipat, serta kolase.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border-2 border-green-200 hover:border-green-400 transition">
+                            <div class="text-4xl text-center mb-2">🏺</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Tanah Liat & Plastisin</h4>
+                            <p class="text-xs text-slate-600 mt-1">Bahan lunak elastis yang mudah dibentuk menjadi patung atau gerabah 3 dimensi.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-green-200 hover:border-green-400 transition">
+                            <div class="text-4xl text-center mb-2">📜</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Kertas Gambar & Kanvas</h4>
+                            <p class="text-xs text-slate-600 mt-1">Alas/bidang tempat kita menempelkan pewarna atau lukisan.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-green-200 hover:border-green-400 transition">
+                            <div class="text-4xl text-center mb-2">✂️</div>
+                            <h4 class="font-fredoka font-bold text-center text-slate-800">Gunting & Lem kertas</h4>
+                            <p class="text-xs text-slate-600 mt-1">Alat pendukung untuk memotong dan merekatkan bahan pada karya kolase/origami.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-brand-200">
+                    <button onclick="switchTab(2)" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-fredoka font-bold rounded-xl transition">
+                        ⬅️ Tujuan Pembelajaran
+                    </button>
+                    <button onclick="switchTab(4)" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-fredoka font-bold rounded-xl btn-bouncy flex items-center gap-2">
+                        <span>Lanjut ke Aktivitas Game</span> 🧩
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: AKTIVITAS INTERAKTIF -->
+        <section id="section-4" class="tab-content hidden transition-all duration-300">
+            <div class="glass-card rounded-3xl p-6 md:p-8 space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="bg-brand-200 text-brand-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Permainan Memilah Media</span>
+                    <h2 class="font-fredoka text-3xl font-bold text-brand-700">🧩 Aktivitas: Mana Media Kering vs Basah?</h2>
+                    <p class="text-slate-600 font-medium text-sm">Klik salah satu alat di bawah, lalu tentukan kategori kelompoknya!</p>
+                </div>
+
+                <!-- Mini Sorting Game -->
+                <div class="bg-brand-50 p-6 rounded-2xl border-2 border-brand-200 space-y-6">
+                    <!-- Target Drop Bins -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Bin 1: Kering -->
+                        <div id="bin-kering" class="bg-amber-100/80 border-4 border-dashed border-amber-400 rounded-2xl p-4 min-h-[140px] flex flex-col items-center justify-start space-y-2">
+                            <h3 class="font-fredoka font-bold text-amber-800 text-lg">✏️ Kotak Media KERING</h3>
+                            <div id="container-kering" class="flex flex-wrap gap-2 justify-center w-full min-h-[60px] p-2 bg-white/70 rounded-xl">
+                                <!-- Matched items appear here -->
+                            </div>
+                        </div>
+
+                        <!-- Bin 2: Basah -->
+                        <div id="bin-basah" class="bg-blue-100/80 border-4 border-dashed border-blue-400 rounded-2xl p-4 min-h-[140px] flex flex-col items-center justify-start space-y-2">
+                            <h3 class="font-fredoka font-bold text-blue-800 text-lg">🎨 Kotak Media BASAH</h3>
+                            <div id="container-basah" class="flex flex-wrap gap-2 justify-center w-full min-h-[60px] p-2 bg-white/70 rounded-xl">
+                                <!-- Matched items appear here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items Pool -->
+                    <div class="space-y-2">
+                        <p class="text-xs font-bold text-center text-slate-600">Pilih alat di bawah ini:</p>
+                        <div id="game-items-pool" class="flex flex-wrap justify-center gap-3">
+                            <!-- Items inserted dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Game Feedback Box -->
+                    <div id="gameFeedback" class="hidden p-4 rounded-xl text-center font-fredoka text-base font-bold transition"></div>
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-brand-200">
+                    <button onclick="switchTab(3)" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-fredoka font-bold rounded-xl transition">
+                        ⬅️ Kembali ke Materi
+                    </button>
+                    <button onclick="switchTab(5)" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-fredoka font-bold rounded-xl btn-bouncy flex items-center gap-2">
+                        <span>Mulai Kuis 20 Soal</span> 📝
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: KUIS / EVALUASI (20 SOAL) -->
+        <section id="section-5" class="tab-content hidden transition-all duration-300">
+            <div class="glass-card rounded-3xl p-6 md:p-8 space-y-6">
+                <!-- Quiz Header Info -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 pb-4 border-b-2 border-brand-200">
+                    <div>
+                        <span class="text-xs font-bold bg-brand-200 text-brand-800 px-3 py-1 rounded-full uppercase">Evaluasi Hasil Belajar</span>
+                        <h2 class="font-fredoka text-2xl md:text-3xl font-bold text-brand-700">📝 Kuis Media Seni Rupa</h2>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-brand-100 px-4 py-2 rounded-2xl border border-brand-300">
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-slate-500">Kemajuan Soal</p>
+                            <p class="font-fredoka font-bold text-brand-700 text-lg" id="quizCounterText">Soal 1 dari 20</p>
+                        </div>
+                        <div class="w-10 h-10 bg-brand-500 rounded-full flex items-center justify-center text-white font-bold text-lg" id="scoreDisplay">
+                            0
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Progress Bar -->
+                <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                    <div id="quizProgressBar" class="bg-brand-500 h-full transition-all duration-300" style="width: 5%;"></div>
+                </div>
+
+                <!-- Main Question Card Container -->
+                <div id="quizBox" class="space-y-6">
+                    <!-- Question Text -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-brand-300 shadow-sm space-y-2">
+                        <span id="questionCategory" class="inline-block text-xs font-bold px-2.5 py-0.5 bg-brand-100 text-brand-700 rounded-md">Kategori: Media Seni</span>
+                        <h3 id="questionText" class="font-fredoka font-bold text-slate-800 text-xl md:text-2xl leading-relaxed">
+                            Loading pertanyaan...
+                        </h3>
+                    </div>
+
+                    <!-- Multiple Choice Options -->
+                    <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Options generated dynamically -->
+                    </div>
+
+                    <!-- Modal Feedback Box for Immediate Answer Result -->
+                    <div id="feedbackModal" class="hidden p-5 rounded-2xl border-2 transition space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span id="feedbackIcon" class="text-3xl">🌟</span>
+                            <h4 id="feedbackTitle" class="font-fredoka font-bold text-lg">Apresiasi!</h4>
+                            <span id="audioIndicator" class="ml-auto text-xs font-bold px-2.5 py-1 rounded-full bg-brand-200 text-brand-800 flex items-center gap-1 animate-pulse">
+                                🎵 Musik Interaktif
+                            </span>
+                        </div>
+                        <p id="feedbackText" class="text-sm font-medium leading-relaxed"></p>
+                        
+                        <div class="pt-2 text-right">
+                            <button id="nextQuestionBtn" onclick="nextQuestion()" class="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-fredoka font-bold rounded-xl btn-bouncy">
+                                Soal Selanjutnya ➡️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: UMPAN BALIK & REFLEKSI -->
+        <section id="section-6" class="tab-content hidden transition-all duration-300">
+            <div class="glass-card rounded-3xl p-6 md:p-10 space-y-8">
+                <div class="text-center space-y-3">
+                    <div class="inline-block px-4 py-1.5 bg-brand-200 text-brand-800 font-bold text-xs rounded-full">
+                        🎉 SELAMAT! KAMU TELAH MENYELESAIKAN KUIS
+                    </div>
+                    <h2 class="font-fredoka text-3xl md:text-4xl font-bold text-brand-700">
+                        Hasil & Refleksi Pembelajaran
+                    </h2>
+                    <p class="text-slate-600 font-medium">Berikut adalah rapot pencapaian belajar kamu hari ini!</p>
+                </div>
+
+                <!-- Final Score Card -->
+                <div class="bg-gradient-to-br from-brand-50 to-brand-100 p-6 md:p-8 rounded-3xl border-4 border-brand-300 text-center space-y-6 max-w-2xl mx-auto shadow-md">
+                    <!-- Student Info Badge -->
+                    <div class="bg-white/80 backdrop-blur px-4 py-2 rounded-2xl inline-block border border-brand-200 text-slate-700 text-sm font-bold">
+                        👤 Nama: <span id="summaryStudentName" class="text-brand-700 font-fredoka font-bold text-base">Siswa SD</span> | Kelas: <span id="summaryStudentClass" class="text-brand-700 font-fredoka font-bold">4 SD</span>
+                    </div>
+
+                    <!-- Stars Display -->
+                    <div id="starsContainer" class="flex justify-center gap-2 text-4xl text-amber-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+
+                    <!-- Numerical Score -->
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">NILAI AKHIR KAMU</p>
+                        <h1 id="finalScoreNumber" class="font-fredoka text-6xl font-bold text-brand-600 my-1">100</h1>
+                        <p id="scoreGradeText" class="font-fredoka font-bold text-slate-700 text-xl">Luar Biasa! Sempurna!</p>
+                    </div>
+
+                    <!-- Details Box -->
+                    <div class="grid grid-cols-2 gap-4 bg-white p-4 rounded-2xl border border-brand-200 text-sm font-bold">
+                        <div class="text-green-600">
+                            <i class="fas fa-check-circle text-lg"></i>
+                            <p class="text-xs text-slate-500 mt-1">Jawaban Benar</p>
+                            <p id="correctCountText" class="text-xl font-fredoka font-bold">20</p>
+                        </div>
+                        <div class="text-red-500">
+                            <i class="fas fa-times-circle text-lg"></i>
+                            <p class="text-xs text-slate-500 mt-1">Jawaban Salah</p>
+                            <p id="wrongCountText" class="text-xl font-fredoka font-bold">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection Activity -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-brand-200 space-y-4 max-w-2xl mx-auto">
+                    <h3 class="font-fredoka font-bold text-slate-800 text-lg text-center flex items-center justify-center gap-2">
+                        <span>💬</span> Refleksi Sahabat Seni
+                    </h3>
+                    <p class="text-sm text-slate-600 text-center font-medium">Bagaimana perasaanmu setelah belajar tentang contoh media seni rupa hari ini?</p>
+
+                    <div class="flex justify-center gap-4 py-2">
+                        <button onclick="selectEmojiReaction('senang')" class="emoji-btn p-3 bg-brand-50 hover:bg-brand-200 rounded-2xl text-3xl border-2 border-brand-300 transition transform hover:scale-110">
+                            😃 <span class="block text-xs font-fredoka font-bold mt-1 text-slate-700">Senang</span>
+                        </button>
+                        <button onclick="selectEmojiReaction('paham')" class="emoji-btn p-3 bg-brand-50 hover:bg-brand-200 rounded-2xl text-3xl border-2 border-brand-300 transition transform hover:scale-110">
+                            💡 <span class="block text-xs font-fredoka font-bold mt-1 text-slate-700">Paham</span>
+                        </button>
+                        <button onclick="selectEmojiReaction('semangat')" class="emoji-btn p-3 bg-brand-50 hover:bg-brand-200 rounded-2xl text-3xl border-2 border-brand-300 transition transform hover:scale-110">
+                            🚀 <span class="block text-xs font-fredoka font-bold mt-1 text-slate-700">Semangat</span>
+                        </button>
+                    </div>
+
+                    <div id="reflectionFeedback" class="hidden p-3 bg-brand-100 rounded-xl text-center text-xs font-bold text-brand-800">
+                        Terima kasih sudah membagikan refleksimu! Teruslah berkarya seni! 🎨
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 pt-4">
+                    <button onclick="restartQuiz()" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-fredoka font-bold rounded-2xl btn-bouncy flex items-center gap-2">
+                        <i class="fas fa-redo"></i>
+                        <span>Ulangi Kuis</span>
+                    </button>
+                    <button onclick="window.print()" class="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-fredoka font-bold rounded-2xl btn-bouncy flex items-center gap-2">
+                        <i class="fas fa-print"></i>
+                        <span>Cetak Hasil Belajar</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-brand-200 py-4 text-center text-xs font-bold text-slate-500 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>🌿 Media Pembelajaran Interaktif Seni Rupa - Kelas 4 Sekolah Dasar</p>
+            <p class="text-brand-600">Tema: Kartun Ceria • Hijau & Putih</p>
+        </div>
+    </footer>
+
+    <script>
+        let isAudioOn = true;
+        let studentData = { name: "Siswa SD", class: "4 SD" };
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        // Audio synthesizer using Web Audio API for cheerful interactive sound effects & melodies
+        function playSound(type) {
+            if (!isAudioOn) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+
+                if (type === 'click') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                } 
+                else if (type === 'correct') {
+                    // Melodi Bouncily Lucu & Ceria (Cartoon Pop + Fanfare Vibrato)
+                    const now = ctx.currentTime;
+                    
+                    // 1. Suara "Boing Pop" Karakter Kartun (Pitch Sweep Up)
+                    const popOsc = ctx.createOscillator();
+                    const popGain = ctx.createGain();
+                    popOsc.type = 'sine';
+                    popOsc.frequency.setValueAtTime(250, now);
+                    popOsc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+                    popGain.gain.setValueAtTime(0.2, now);
+                    popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    popOsc.connect(popGain);
+                    popGain.connect(ctx.destination);
+                    popOsc.start(now);
+                    popOsc.stop(now + 0.12);
+
+                    // 2. Melodi Fanfare Kartun Ceria (Arpeggio Bouncy dengan Vibrato Lucu)
+                    const notes = [
+                        { freq: 523.25, time: 0.08, duration: 0.10, type: 'triangle' }, // C5
+                        { freq: 659.25, time: 0.16, duration: 0.10, type: 'triangle' }, // E5
+                        { freq: 783.99, time: 0.24, duration: 0.12, type: 'triangle' }, // G5
+                        { freq: 1046.50, time: 0.34, duration: 0.15, type: 'sine' },     // C6
+                        { freq: 1318.51, time: 0.46, duration: 0.35, type: 'sine' }      // E6
+                    ];
+
+                    notes.forEach(note => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = note.type;
+                        osc.frequency.setValueAtTime(note.freq, now + note.time);
+
+                        // Efek vibrato/wobble menggemaskan pada nada penutup
+                        if (note.freq > 1200) {
+                            const lfo = ctx.createOscillator();
+                            const lfoGain = ctx.createGain();
+                            lfo.frequency.value = 16; // 16Hz Vibrato
+                            lfoGain.gain.value = 24;
+                            lfo.connect(osc.frequency);
+                            lfo.start(now + note.time);
+                            lfo.stop(now + note.time + note.duration);
+                        }
+
+                        gain.gain.setValueAtTime(0.001, now + note.time);
+                        gain.gain.linearRampToValueAtTime(0.25, now + note.time + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + note.time + note.duration);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + note.time);
+                        osc.stop(now + note.time + note.duration);
+                    });
+                } 
+                else if (type === 'wrong') {
+                    // Suara Kartun Lucu menggelitik (Wah-Wah Trombone + Elastic Spring Boing)
+                    const now = ctx.currentTime;
+
+                    // 1. Suara "Wah-Wah" Trombone Kartun Lucu dengan Wobbly LFO
+                    const wahNotes = [
+                        { startFreq: 440, endFreq: 392, time: 0.00, duration: 0.20 }, // A4 -> G4
+                        { startFreq: 392, endFreq: 330, time: 0.18, duration: 0.22 }, // G4 -> E4
+                        { startFreq: 330, endFreq: 220, time: 0.38, duration: 0.45 }  // E4 -> A3 (Slide menggelitik)
+                    ];
+
+                    wahNotes.forEach(note => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        const lfo = ctx.createOscillator();
+                        const lfoGain = ctx.createGain();
+
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(note.startFreq, now + note.time);
+                        osc.frequency.exponentialRampToValueAtTime(note.endFreq, now + note.time + note.duration);
+
+                        // Vibrato LFO untuk efek "Goyang Wah-Wah Lucu"
+                        lfo.frequency.setValueAtTime(12, now + note.time);
+                        lfoGain.gain.setValueAtTime(20, now + note.time);
+                        lfo.connect(osc.frequency);
+                        lfo.start(now + note.time);
+                        lfo.stop(now + note.time + note.duration);
+
+                        gain.gain.setValueAtTime(0.12, now + note.time);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + note.time + note.duration);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + note.time);
+                        osc.stop(now + note.time + note.duration);
+                    });
+
+                    // 2. Efek "Boing-Plop" Pegas Kartun di Akhir
+                    const springOsc = ctx.createOscillator();
+                    const springGain = ctx.createGain();
+                    springOsc.type = 'sine';
+                    springOsc.frequency.setValueAtTime(160, now + 0.48);
+                    springOsc.frequency.exponentialRampToValueAtTime(55, now + 0.72);
+
+                    springGain.gain.setValueAtTime(0.18, now + 0.48);
+                    springGain.gain.exponentialRampToValueAtTime(0.001, now + 0.72);
+
+                    springOsc.connect(springGain);
+                    springGain.connect(ctx.destination);
+                    springOsc.start(now + 0.48);
+                    springOsc.stop(now + 0.72);
+                }
+            } catch (e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        function toggleAudio() {
+            isAudioOn = !isAudioOn;
+            const soundIcon = document.getElementById('soundIcon');
+            const soundText = document.getElementById('soundText');
+            if (isAudioOn) {
+                soundIcon.className = "fas fa-volume-up text-lg text-brand-600";
+                soundText.innerText = "Suara: ON";
+                playSound('click');
+            } else {
+                soundIcon.className = "fas fa-volume-mute text-lg text-slate-400";
+                soundText.innerText = "Suara: OFF";
+            }
+        }
+
+        function switchTab(step) {
+            playSound('click');
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show current section
+            const activeSection = document.getElementById(`section-${step}`);
+            if (activeSection) activeSection.classList.remove('hidden');
+
+            // Update Header Buttons Styling
+            document.querySelectorAll('.step-btn').forEach((btn, index) => {
+                if (index + 1 === step) {
+                    btn.className = "step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-brand-500 text-white shadow-sm font-bold";
+                } else {
+                    btn.className = "step-btn flex-1 min-w-[90px] py-2 px-1 text-center rounded-xl transition bg-white text-slate-600 hover:bg-brand-100 font-bold";
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Initialize game if step 4
+            if (step === 4) {
+                initGame();
+            }
+            // Initialize quiz if step 5
+            if (step === 5 && currentQuestionIndex === 0) {
+                loadQuestion();
+            }
+        }
+
+        function saveIdentityAndStart() {
+            const nameInput = document.getElementById('studentName').value.trim();
+            const classInput = document.getElementById('studentClass').value.trim();
+
+            if (nameInput !== "") {
+                studentData.name = nameInput;
+            }
+            if (classInput !== "") {
+                studentData.class = classInput;
+            }
+
+            document.getElementById('summaryStudentName').innerText = studentData.name;
+            document.getElementById('summaryStudentClass').innerText = studentData.class;
+
+            switchTab(2); // Go to Tujuan Pembelajaran
+        }
+
+        function showMaterialTab(tabName) {
+            playSound('click');
+            document.querySelectorAll('.material-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`material-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.mat-tab-btn').forEach(btn => {
+                btn.className = "mat-tab-btn px-5 py-2.5 rounded-2xl font-fredoka font-bold text-sm bg-white text-slate-600 hover:bg-brand-100";
+            });
+            document.getElementById(`mat-tab-${tabName}`).className = "mat-tab-btn px-5 py-2.5 rounded-2xl font-fredoka font-bold text-sm bg-brand-500 text-white shadow-sm";
+        }
+
+        const miniGameItems = [
+            { id: 1, name: "Pensil Warna", type: "kering", icon: "✏️" },
+            { id: 2, name: "Cat Air", type: "basah", icon: "🎨" },
+            { id: 3, name: "Krayon", type: "kering", icon: "🖍️" },
+            { id: 4, name: "Cat Poster", type: "basah", icon: "🛢️" },
+            { id: 5, name: "Spidol Warna", type: "kering", icon: "🖊️" },
+            { id: 6, name: "Cat Minyak", type: "basah", icon: "🖌️" }
+        ];
+
+        function initGame() {
+            const pool = document.getElementById('game-items-pool');
+            document.getElementById('container-kering').innerHTML = '';
+            document.getElementById('container-basah').innerHTML = '';
+            document.getElementById('gameFeedback').classList.add('hidden');
+            pool.innerHTML = '';
+
+            miniGameItems.forEach(item => {
+                const itemEl = document.createElement('button');
+                itemEl.id = `item-${item.id}`;
+                itemEl.className = "px-4 py-2 bg-white rounded-xl border-2 border-brand-300 font-fredoka font-bold text-slate-700 shadow-sm hover:scale-105 transition flex items-center gap-2";
+                itemEl.innerHTML = `<span>${item.icon}</span> <span>${item.name}</span>`;
+                itemEl.onclick = () => selectGameItem(item);
+                pool.appendChild(itemEl);
+            });
+        }
+
+        function selectGameItem(item) {
+            playSound('click');
+            const itemEl = document.getElementById(`item-${item.id}`);
+            const feedback = document.getElementById('gameFeedback');
+
+            feedback.classList.remove('hidden');
+
+            if (item.type === 'kering') {
+                document.getElementById('container-kering').appendChild(itemEl);
+                feedback.className = "p-3 rounded-xl text-center font-fredoka text-sm font-bold bg-amber-100 text-amber-800 border border-amber-300";
+                feedback.innerHTML = `🌟 Bagus! <strong>${item.name}</strong> berhasil dimasukkan ke Kotak Media KERING!`;
+                playSound('correct');
+            } else {
+                document.getElementById('container-basah').appendChild(itemEl);
+                feedback.className = "p-3 rounded-xl text-center font-fredoka text-sm font-bold bg-blue-100 text-blue-800 border border-blue-300";
+                feedback.innerHTML = `🌟 Hebat! <strong>${item.name}</strong> berhasil dimasukkan ke Kotak Media BASAH!`;
+                playSound('correct');
+            }
+
+            itemEl.onclick = null; // Disable re-clicking
+            itemEl.classList.add('opacity-75', 'cursor-default');
+        }
+
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "Alat mewarnai berbentuk batang lilin yang sangat disukai anak-anak SD untuk mewarnai adalah...",
+                category: "Media Kering",
+                options: ["Cat Air", "Krayon", "Cat Minyak", "Tinta Bak"],
+                answer: 1, // Krayon
+                praise: "Hore! Jawabanmu Tepat Sekali! 🌟 Krayon terbuat dari lilin dan termasuk media kering yang aman untuk anak SD.",
+                explanation: "Ups, kurang tepat! Krayon adalah pewarna berbentuk batang lilin yang termasuk dalam contoh media kering."
+            },
+            {
+                id: 2,
+                question: "Cat air (watercolor) memerlukan cairan apakah untuk mengencerkannya sebelum digunakan?",
+                category: "Media Basah",
+                options: ["Minyak Goreng", "Air Bersih", "Lem Kertas", "Susu"],
+                answer: 1, // Air Bersih
+                praise: "Wah, kamu pintar sekali! 💧 Cat air membutuhkan air bersih sebagai cairan pengencer.",
+                explanation: "Ups, kurang tepat! Cat air membutuhkan air bersih agar warnanya dapat larut dan dioleskan pada kertas."
+            },
+            {
+                id: 3,
+                question: "Manakah di bawah ini yang merupakan alat untuk mencampur berbagai warna cat basah?",
+                category: "Alat Pendukung",
+                options: ["Palet", "Penghapus", "Penggaris", "Gunting"],
+                answer: 0, // Palet
+                praise: "Hebat! 🎉 Palet adalah wadah berlekuk khusus untuk mencampur cat.",
+                explanation: "Ups! Jawabannya adalah Palet. Palet digunakan melukis untuk menampung dan membaurkan cat air atau cat minyak."
+            },
+            {
+                id: 4,
+                question: "Alat berbulu halus yang digunakan untuk mengoleskan cat ke bidang gambar dinamakan...",
+                category: "Alat Pendukung",
+                options: ["Pensil 2B", "Spidol", "Kuas Lukis", "Crayon"],
+                answer: 2, // Kuas Lukis
+                praise: "Luar biasa! 🖌️ Kuas lukis berfungsi mengoleskan cat dengan rapi.",
+                explanation: "Ups! Alat untuk mengoleskan cat air/poster adalah Kuas Lukis."
+            },
+            {
+                id: 5,
+                question: "Pensil warna, krayon, dan spidol dikelompokkan ke dalam jenis media...",
+                category: "Jenis Media",
+                options: ["Media Kering", "Media Basah", "Media Udara", "Media Gas"],
+                answer: 0, // Media Kering
+                praise: "Tepat sekali! ✨ Media kering tidak membutuhkan cairan saat menggunakannya.",
+                explanation: "Kurang tepat! Pensil warna, krayon, dan spidol tergolong Media Kering karena bisa langsung digoreskan."
+            },
+            {
+                id: 6,
+                question: "Bahan lunak alami yang sering digunakan anak-anak untuk membuat patung atau gerabah sederhana adalah...",
+                category: "Media 3D",
+                options: ["Kaca", "Tanah Liat", "Besi", "Batu Akik"],
+                answer: 1, // Tanah Liat
+                praise: "Hebat! 🏺 Tanah liat adalah bahan lunak alami yang mudah dibentuk menjadi karya 3 dimensi.",
+                explanation: "Ups, kurang tepat! Bahan lunak alami untuk patung/gerabah adalah Tanah Liat."
+            },
+            {
+                id: 7,
+                question: "Alat pemotong yang aman digunakan siswa SD untuk memotong kertas gambar atau kain flanel adalah...",
+                category: "Alat Pendukung",
+                options: ["Gunting", "Cangkul", "Gergaji", "Palu"],
+                answer: 0, // Gunting
+                praise: "Benar sekali! ✂️ Gunting adalah alat utama untuk memotong kertas dengan rapi.",
+                explanation: "Jawaban kurang tepat. Alat pemotong kertas dalam membuat kerajinan adalah Gunting."
+            },
+            {
+                id: 8,
+                question: "Untuk menempelkan potongan kertas pada karya seni kolase, kita membutuhkan alat yaitu...",
+                category: "Alat Pendukung",
+                options: ["Air", "Lem Kertas", "Penghapus", "Penggaris"],
+                answer: 1, // Lem Kertas
+                praise: "Super! 📑 Lem kertas berfungsi merekatkan bahan pada bidang gambar.",
+                explanation: "Ups! Lem kertas adalah bahan perekat untuk seni menempel/kolase."
+            },
+            {
+                id: 9,
+                question: "Manakah dari pewarna berikut yang TIDAK tergolong ke dalam media kering?",
+                category: "Media Seni",
+                options: ["Spidol", "Pensil Warna", "Cat Poster", "Krayon"],
+                answer: 2, // Cat Poster
+                praise: "Wah, cermat sekali! 🎯 Cat poster termasuk media basah karena berbentuk cairan pekat.",
+                explanation: "Kurang tepat! Cat poster adalah media basah, sedangkan spidol, pensil warna, dan krayon adalah media kering."
+            },
+            {
+                id: 10,
+                question: "Alas kain khusus yang dibentang pada bingkai kayu untuk melukis dengan cat minyak dinamakan...",
+                category: "Bidang Gambar",
+                options: ["Kertas HVS", "Kanvas", "Daun", "Plastik"],
+                answer: 1, // Kanvas
+                praise: "Mantap! 🖼️ Kanvas adalah bidang lukis dari kain tebal yang sangat kuat.",
+                explanation: "Kurang tepat. Bidang melukis dari kain berlapis khusus dinamakan Kanvas."
+            },
+            {
+                id: 11,
+                question: "Menggambar sketsa awal atau garis bentuk sebelum mewarnai paling baik menggunakan...",
+                category: "Media Kering",
+                options: ["Pensil 2B", "Cat Tembok", "Krayon Hitam", "Lem Uhu"],
+                answer: 0, // Pensil 2B
+                praise: "Joss! ✏️ Pensil 2B sangat mudah dihapus jika ada kesalahan saat membuat sketsa.",
+                explanation: "Ups! Pensil 2B adalah pilihan terbaik untuk sketsa karena garisnya tipis dan mudah dihapus."
+            },
+            {
+                id: 12,
+                question: "Seni melipat kertas warna-warni khas dari Jepang yang sering dipelajari di SD dinamakan...",
+                category: "Seni Kertas",
+                options: ["Mewarnai", "Origami", "Patung", "Ukiran"],
+                answer: 1, // Origami
+                praise: "Keren! 📄 Origami adalah seni melipat kertas menjadi bentuk hewan, bunga, atau benda menarik.",
+                explanation: "Ups! Seni melipat kertas dinamakan Origami."
+            },
+            {
+                id: 13,
+                question: "Teknik membuat gambar dengan menempelkan potongan bahan seperti kertas, kain, atau biji-bijian disebut...",
+                category: "Teknik Seni Rupa",
+                options: ["Kolase", "Patung", "Membuat Sablon", "Mengukir"],
+                answer: 0, // Kolase
+                praise: "Hebat! 🌾 Kolase adalah karya seni menempel berbagai potongan bahan.",
+                explanation: "Kurang tepat! Teknik menempel bahan potongan disebut Teknik Kolase."
+            },
+            {
+                id: 14,
+                question: "Alat bantu yang digunakan untuk membersihkan atau membetulkan goresan pensil yang salah adalah...",
+                category: "Alat Pendukung",
+                options: ["Kuas", "Penghapus (Karet)", "Penggaris", "Cangkul"],
+                answer: 1, // Penghapus
+                praise: "Tepat! 🧽 Penghapus karet berguna merapikan sketsa pensil.",
+                explanation: "Penghapus karet adalah alat untuk menghilangkan goresan pensil yang tidak sengaja."
+            },
+            {
+                id: 15,
+                question: "Pewarna yang terbuat dari campuran pigmen dan minyak encer dinamakan...",
+                category: "Media Basah",
+                options: ["Krayon", "Pensil Warna", "Cat Minyak", "Spidol"],
+                answer: 2, // Cat Minyak
+                praise: "Pintar! 🎨 Cat minyak adalah contoh media basah berminyak.",
+                explanation: "Cat minyak adalah media basah yang membutuhkan pengencer berupa minyak melukis."
+            },
+            {
+                id: 16,
+                question: "Mengapa kita harus merawat dan membersihkan kuas setelah melukis?",
+                category: "Sikap Seni",
+                options: [
+                    "Agar buang-buang waktu",
+                    "Agar kuas tidak cepat rusak dan bulunya tetap lembut",
+                    "Agar cepat habis",
+                    "Agar kuas berubah warna"
+                ],
+                answer: 1, // Agar kuas tidak cepat rusak
+                praise: "Jawaban yang sangat bijak! 🌟 Alat seni harus dirawat agar awet dan bisa dipakai lagi.",
+                explanation: "Merawat kuas setelah digunakan menjaga bulu kuas tetap bersih dan tidak mengeras."
+            },
+            {
+                id: 17,
+                question: "Manakah alat yang paling cocok digunakan untuk membuat garis lurus yang rapi pada kertas gambar?",
+                category: "Alat Pendukung",
+                options: ["Penggaris", "Gunting", "Krayon", "Palet"],
+                answer: 0, // Penggaris
+                praise: "Tepat sekali! 📏 Penggaris membantu kita membuat garis lurus dan mengukur jarak.",
+                explanation: "Penggaris adalah alat bantu untuk menggambar garis lurus."
+            },
+            {
+                id: 18,
+                question: "Satu paket krayon dengan berbagai gradasi warna tua ke muda berguna untuk membuat teknik...",
+                category: "Teknik Mewarnai",
+                options: ["Potong Kertas", "Gradasi Warna", "Menempel Biji", "Patung"],
+                answer: 1, // Gradasi Warna
+                praise: "Luar biasa! 🌈 Gradasi warna membuat gambar tampak hidup dan lebih indah.",
+                explanation: "Pencampuran warna tua ke muda disebut teknik Gradasi Warna."
+            },
+            {
+                id: 19,
+                question: "Manakah buatan karya seni rupa yang memiliki panjang, lebar, dan volume 3 dimensi?",
+                category: "Bentuk Karya",
+                options: ["Lukisan Kertas", "Patung Gerabah", "Foto Cetak", "Gambar Pensil"],
+                answer: 1, // Patung Gerabah
+                praise: "Benar! 🏺 Patung gerabah dapat dilihat dan disentuh dari segala arah (3D).",
+                explanation: "Karya 3 dimensi memiliki volume, contohnya Patung Gerabah."
+            },
+            {
+                id: 20,
+                question: "Spidol warna mengandung cairan tinta di dalamnya. Oleh karena itu, jika lupa ditutup maka spidol akan...",
+                category: "Perawatan Alat",
+                options: ["Makin Basah", "Kering dan Tidak Bisa Dipakai", "Berubah Jadi Krayon", "Makin Banyak"],
+                answer: 1, // Kering dan tidak bisa dipakai
+                praise: "Hebat sekali! 💯 Mematuhi aturan merawat alat membuat spidol tahan lama!",
+                explanation: "Tinta spidol mengandung alkohol/cairan yang mudah menguap, jadi harus selalu ditutup rapat!"
+            }
+        ];
+
+        function loadQuestion() {
+            const modal = document.getElementById('feedbackModal');
+            modal.classList.add('hidden');
+
+            const currentQ = quizQuestions[currentQuestionIndex];
+            document.getElementById('quizCounterText').innerText = `Soal ${currentQuestionIndex + 1} dari ${quizQuestions.length}`;
+            document.getElementById('questionCategory').innerText = `Kategori: ${currentQ.category}`;
+            document.getElementById('questionText').innerText = `${currentQuestionIndex + 1}. ${currentQ.question}`;
+            
+            // Progress Bar Width
+            const progressPct = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progressPct}%`;
+
+            // Options rendering
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            currentQ.options.forEach((optText, i) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn p-4 bg-white border-2 border-brand-200 hover:border-brand-500 rounded-2xl font-bold text-slate-700 text-left transition flex items-center gap-3 shadow-sm hover:shadow";
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 font-fredoka flex items-center justify-center shrink-0">${optionLetters[i]}</span>
+                    <span class="text-sm md:text-base">${optText}</span>
+                `;
+                btn.onclick = () => selectOption(i);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex) {
+            playSound('click');
+            const currentQ = quizQuestions[currentQuestionIndex];
+            const modal = document.getElementById('feedbackModal');
+            const titleEl = document.getElementById('feedbackTitle');
+            const textEl = document.getElementById('feedbackText');
+            const iconEl = document.getElementById('feedbackIcon');
+            const audioIndicator = document.getElementById('audioIndicator');
+
+            // Disable all option buttons
+            const optionBtns = document.querySelectorAll('.quiz-opt-btn');
+            optionBtns.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === currentQ.answer) {
+                    btn.classList.add('bg-green-100', 'border-green-500', 'text-green-900');
+                } else if (idx === selectedIndex && idx !== currentQ.answer) {
+                    btn.classList.add('bg-red-100', 'border-red-400', 'text-red-900');
+                }
+            });
+
+            modal.classList.remove('hidden');
+
+            if (selectedIndex === currentQ.answer) {
+                // Correct
+                score++;
+                playSound('correct');
+                document.getElementById('scoreDisplay').innerText = score;
+                modal.className = "p-5 rounded-2xl border-2 border-green-400 bg-green-50 text-green-900 space-y-3";
+                iconEl.innerText = "🌟";
+                titleEl.innerText = "Apresiasi: Jawabanmu Benar!";
+                textEl.innerText = currentQ.praise;
+                if (audioIndicator) {
+                    audioIndicator.className = "ml-auto text-xs font-bold px-2.5 py-1 rounded-full bg-green-200 text-green-800 flex items-center gap-1 animate-pulse";
+                    audioIndicator.innerHTML = "🎶 Boing Pop & Melodi Ceria!";
+                }
+            } else {
+                // Incorrect
+                playSound('wrong');
+                modal.className = "p-5 rounded-2xl border-2 border-red-300 bg-red-50 text-red-900 space-y-3";
+                iconEl.innerText = "💡";
+                titleEl.innerText = "Penjelasan Soal:";
+                textEl.innerText = currentQ.explanation;
+                if (audioIndicator) {
+                    audioIndicator.className = "ml-auto text-xs font-bold px-2.5 py-1 rounded-full bg-red-200 text-red-800 flex items-center gap-1 animate-pulse";
+                    audioIndicator.innerHTML = "🎺 Suara Wah-Wah & Pegas Lucu!";
+                }
+            }
+
+            userAnswers.push({
+                questionId: currentQ.id,
+                selected: selectedIndex,
+                isCorrect: selectedIndex === currentQ.answer
+            });
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            switchTab(6); // Go to final reflection slide
+            playSound('correct');
+
+            // Calculate final percentage score out of 100
+            const totalScore = Math.round((score / quizQuestions.length) * 100);
+            document.getElementById('finalScoreNumber').innerText = totalScore;
+            document.getElementById('correctCountText').innerText = score;
+            document.getElementById('wrongCountText').innerText = quizQuestions.length - score;
+
+            // Rating Grade & Stars
+            const starsContainer = document.getElementById('starsContainer');
+            const scoreGradeText = document.getElementById('scoreGradeText');
+
+            if (totalScore >= 90) {
+                scoreGradeText.innerText = "🏆 Wow! Luar Biasa, Kamu Ahli Seni Rupa!";
+                starsContainer.innerHTML = '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>';
+            } else if (totalScore >= 70) {
+                scoreGradeText.innerText = "👏 Bagus Sekali! Nilai Kamu Sangat Baik!";
+                starsContainer.innerHTML = '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>';
+            } else if (totalScore >= 50) {
+                scoreGradeText.innerText = "👍 Hebat! Terus Tingkatkan Belajarmu Ya!";
+                starsContainer.innerHTML = '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>';
+            } else {
+                scoreGradeText.innerText = "💪 Jangan Patah Semangat! Ayo Coba Lagi!";
+                starsContainer.innerHTML = '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>';
+            }
+
+            // Fire Confetti Animation for celebration!
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function selectEmojiReaction(type) {
+            playSound('click');
+            document.getElementById('reflectionFeedback').classList.remove('hidden');
+        }
+
+        function restartQuiz() {
+            playSound('click');
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('scoreDisplay').innerText = "0";
+            switchTab(5);
+            loadQuestion();
+        }
+
+        // Initialize default view on load
+        window.onload = function() {
+            console.log("Media Pembelajaran Seni Rupa siap digunakan.");
+        }
+    </script>
+</body>
+</html>
